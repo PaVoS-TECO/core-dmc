@@ -15,7 +15,7 @@ import server.transfer.sender.util.TimeUtil;
 
 public class RuntimeGenerator {
 	
-	private static GeoGrid grid = new GeoRecRectangleGrid(new Rectangle2D.Double(- WorldMapData.lngRange, - WorldMapData.latRange, WorldMapData.lngRange * 2, WorldMapData.latRange * 2),  2, 2, 3);
+	private static GeoGrid grid = new GeoRecRectangleGrid(new Rectangle2D.Double(- WorldMapData.LNG_RANGE, - WorldMapData.LAT_RANGE, WorldMapData.LNG_RANGE * 2, WorldMapData.LAT_RANGE * 2),  2, 2, 3);
 	
 	public static void main(String[] args) {
 		Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(() -> {
@@ -31,8 +31,8 @@ public class RuntimeGenerator {
 	}
 	
 	private static Point2D.Double randomLocation() {
-		double x = Math.random() * grid.mapBounds.getX();
-		double y = Math.random() * grid.mapBounds.getY();
+		double x = Math.random() * grid.getMapBounds().getX();
+		double y = Math.random() * grid.getMapBounds().getY();
 		return new Point2D.Double(x, y);
 	}
 	

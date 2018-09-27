@@ -6,22 +6,24 @@ import java.util.Random;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-import server.core.grid.GeoGrid;
-import server.core.grid.GeoRecRectangleGrid;
-import server.core.grid.config.WorldMapData;
-import server.core.web.WebServer;
-import server.transfer.data.ObservationData;
-import server.transfer.sender.util.TimeUtil;
+import edu.teco.pavos.core.grid.GeoGrid;
+import edu.teco.pavos.core.grid.GeoRecRectangleGrid;
+import edu.teco.pavos.core.grid.config.WorldMapData;
+import edu.teco.pavos.core.web.WebServer;
+import edu.teco.pavos.transfer.data.ObservationData;
+import edu.teco.pavos.transfer.sender.util.TimeUtil;
 
 public class RuntimeGenerator {
 	
-	private static GeoGrid grid = new GeoRecRectangleGrid(new Rectangle2D.Double(- WorldMapData.LNG_RANGE, - WorldMapData.LAT_RANGE, WorldMapData.LNG_RANGE * 2, WorldMapData.LAT_RANGE * 2),  2, 2, 3);
-	
+	private static volatile GeoGrid grid;
 	public static void main(String[] args) {
+		
+		grid = new GeoRecRectangleGrid(new Rectangle2D.Double(- WorldMapData.LNG_RANGE, - WorldMapData.LAT_RANGE, WorldMapData.LNG_RANGE * 2, WorldMapData.LAT_RANGE * 2),  2, 2, 3);
+		
 		Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(() -> {
 			grid.addObservation(randomLocation(), generateRandom(randomSensor(), "temperature_celsius", 40.0));
 			grid.addObservation(randomLocation(), generateRandom(randomSensor(), "pM_10", 40.0));
-		}, 0, 8, TimeUnit.SECONDS);
+		}, 1, 8, TimeUnit.SECONDS);
 		new Thread(new WebServer()).start();
 	}
 	
@@ -38,14 +40,15 @@ public class RuntimeGenerator {
 	
 	private static ObservationData generateRandom(String sensorID, String property, double max) {
 		double value = Math.random() * max;
-		return generate(sensorID, property, String.valueOf(value));
+		return generate(sensorID, property, value);
 	}
 	
-	private static ObservationData generate(String sensorID, String property, String value) {
+	private static ObservationData generate(String sensorID, String property, Double value) {
 		ObservationData result = new ObservationData();
-		result.observationDate = TimeUtil.getUTCDateTimeNowString();
-		result.sensorID = sensorID;
-		result.observations.put(property, value);
+		result.setObservationDate(TimeUtil.getUTCDateTimeNowString());
+		result.setSensorID(sensorID);
+		result.addSingleObservation(property, value);
+		System.out.println(result);
 		return result;
 	}
 	

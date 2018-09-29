@@ -10,12 +10,10 @@ import static org.apache.kafka.clients.consumer.ConsumerConfig.KEY_DESERIALIZER_
 import static org.apache.kafka.clients.consumer.ConsumerConfig.SESSION_TIMEOUT_MS_CONFIG;
 import static org.apache.kafka.streams.StreamsConfig.BOOTSTRAP_SERVERS_CONFIG;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Properties;
 import java.util.UUID;
 
-import org.apache.avro.io.JsonEncoder;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
@@ -23,14 +21,12 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-public class Exporttester2 {
+public class Exporttester {
 
 public static  int counter = 0;
 
     public static void main(String[] args) throws InterruptedException {
 
-
-    	
         //Client Props
         Properties props = new Properties();
         props.put(BOOTSTRAP_SERVERS_CONFIG, "pavos.oliver.pw:9092");
@@ -49,22 +45,12 @@ public static  int counter = 0;
         props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
         props.put("schema.registry.url", "http://pavos.oliver.pw:8081");
 
-
-
-
-
-
-        KafkaConsumer<String, String> consumer = new KafkaConsumer<>(props);
+        @SuppressWarnings("resource")
+		KafkaConsumer<String, String> consumer = new KafkaConsumer<>(props);
 
         consumer.subscribe(Arrays.asList("AvroExport"));
 
         System.out.println("Consumer A gestartet!");
-
-
-        JSONObject obj;
-        JsonEncoder jsonEncoder;
-        int i = 0;
-        ArrayList<String> list = new ArrayList<>();
 
         while (true) {
 
@@ -74,27 +60,15 @@ public static  int counter = 0;
 
             	try {
 					JSONObject obs = (JSONObject) new JSONParser().parse(record1.value());
-					JSONObject foiI =  (JSONObject) new JSONParser().parse((String) obs.get("FeatureOfInterest"));
+					new JSONParser().parse((String) obs.get("FeatureOfInterest"));
                     JSONObject dataS =  (JSONObject) new JSONParser().parse((String) obs.get("Datastream"));
-                    JSONObject Thing =  (JSONObject) new JSONParser().parse((String) dataS.get("Thing"));
-                    JSONObject Sensor =  (JSONObject) new JSONParser().parse((String) dataS.get("Sensor"));
-                    JSONObject ObsPro =  (JSONObject) new JSONParser().parse((String) dataS.get("ObservedProperty"));
-                    
+                    new JSONParser().parse((String) dataS.get("Thing"));
+                    new JSONParser().parse((String) dataS.get("Sensor"));
+                    new JSONParser().parse((String) dataS.get("ObservedProperty"));
                    System.out.println(obs.get("iotId"));
-					
-					
-					
 				} catch (ParseException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-                
-
-
-
-
-
             });
-
     }
 }}
